@@ -42,7 +42,9 @@ const allowedOrigins = [
   "http://127.0.0.1:5173",                  // Localhost (IPv4)
   "http://localhost",                      // Flutter web
   "http://127.0.0.1",                      // Emulator or test
-  "https://work-lah-admin-panel.vercel.app" // ✅ Deployed Vercel frontend (no slash)
+  "https://work-lah-admin-panel.vercel.app",
+  "https://worklah-backend.onrender.com"
+   // ✅ Deployed Vercel frontend (no slash)
 ];
 
 app.use(cors({
