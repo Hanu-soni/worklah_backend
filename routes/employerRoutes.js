@@ -27,7 +27,7 @@ router.get('/', getEmployers);
 router.get('/:id', getEmployerById);
 router.get("/:outletId/overview", getOutletOverview);
 router.post("/create", upload.fields([{ name: "companyLogo" }, { name: "acraCertificate" }]), createEmployer);
-router.put('/:id', updateEmployer);
+router.post('/edit/:id', updateEmployer);
 router.delete('/:id', deleteEmployer);
 
 module.exports = router;
