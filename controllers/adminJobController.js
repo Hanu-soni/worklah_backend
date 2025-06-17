@@ -128,6 +128,17 @@ if (sortBy === "date") {
       .limit(Number(limit))
       .lean();
 
+
+
+      
+     const totalActiveJobs = await Job.countDocuments({ date: { $lt: new Date() },isCancelled:false });
+
+
+    const totalUpcomingJobs = await Job.countDocuments({ date: { $gt: new Date() } });
+    const totalCancelledJobs = await Job.countDocuments({isCancelled:true});
+    const totalCompletedJobs = 0
+
+
     const applicationCounts = await Application.aggregate([
       {
         $group: {
@@ -255,10 +266,10 @@ if (totalHeadcountActive > 0) {
       );
     }
 
-    const totalActiveJobs = formattedJobs.filter((job) => job.jobStatus === "Active").length;
-    const totalUpcomingJobs = formattedJobs.filter((job) => job.jobStatus === "Upcoming").length;
-    const totalCancelledJobs = formattedJobs.filter((job) => job.jobStatus === "Cancelled").length;
-    const totalCompletedJobs = formattedJobs.filter((job) => job.jobStatus === "Completed").length;
+    // const totalActiveJobs = formattedJobs.filter((job) => job.jobStatus === "Active").length;
+    // const totalUpcomingJobs = formattedJobs.filter((job) => job.jobStatus === "Upcoming").length;
+    // const totalCancelledJobs = formattedJobs.filter((job) => job.jobStatus === "Cancelled").length;
+    // const totalCompletedJobs = formattedJobs.filter((job) => job.jobStatus === "Completed").length;
 
     // const attendanceData = await Application.aggregate([
     //   { $match: { status: "Completed" } },

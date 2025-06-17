@@ -43,7 +43,7 @@ const allowedOrigins = [
   "http://localhost",                      // Flutter web
   "http://127.0.0.1",                      // Emulator or test
   "https://work-lah-admin-panel.vercel.app",
-  "https://worklah-backend.onrender.com",
+ // "https://worklah-backend.onrender.com",
   "https://work-lah-admin-panel-six.vercel.app"
    // ✅ Deployed Vercel frontend (no slash)
 ];
