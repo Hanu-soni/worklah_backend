@@ -9,7 +9,7 @@ router.get('/', getAllJobs); // ✅ Get all jobs with filters
 router.get('/deployment-tracking', getDeploymentTracking); // ✅ Get deployment tracking data
 router.get('/:id', getJobById); // ✅ Get a specific job
 router.post('/', createJob); // ✅ Create a new job
-router.put('/:id', updateJob); // ✅ Update a job
+router.post('/update/:id', updateJob); // ✅ Update a job
 router.patch('/:id/status', changeJobStatus); // ✅ Change job status
 router.put('/cancel/:id', deleteJob); // ✅ Delete a job
 router.post("/:id/duplicate", duplicateJob); // ✅ Duplicate Job

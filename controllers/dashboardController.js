@@ -7,8 +7,8 @@ const User = require("../models/User");
 
 exports.getOverviewMetrics = async (req, res) => {
   try {
-    // ✅ Count total jobs
-    const totalJobs = await Job.countDocuments();
+    // ✅ Count active jobs
+    const totalJobs = await Job.countDocuments({date:{$gte:new Date()}});
 
     // ✅ Count activated Hustle Heroes (Users)
     const activatedHeroes = await User.countDocuments({ role: "USER" });

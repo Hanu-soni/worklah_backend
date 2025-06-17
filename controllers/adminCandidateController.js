@@ -384,6 +384,42 @@ exports.getCandidatesByJob = async (req, res) => {
 
 
 
+exports.getAllCandidates = async (req, res) => {
+  try {
+    const { id } = req.params; // Job ID
+    const { status, shiftTime } = req.query; // Filters
+
+    // ✅ Fetch Job with details
+    // const job = await Job.find()
+    //   .populate("company", "companyLegalName companyLogo")
+    //   .populate("outlet", "outletName outletAddress")
+    //   .populate("shifts", "startTime startMeridian endTime endMeridian vacancy standbyVacancy")
+    //   .lean().sort('createdAt');
+   const application = await Application.find()
+  .limit(5)
+  .sort({ createdAt: -1 })
+  .populate('userId', 'fullName email phoneNumber profilePicture')
+  .populate('jobId', 'jobName');
+
+    if (!application) 
+      return res.status(404).json({ message: "Job not found" });
+
+    return res.status(200).json({
+      success:true,
+      data:application
+    })
+
+
+    }
+   catch (error) {
+    console.error("Error in getCandidatesByJob:", error);
+    return res.status(500).json({ error: "Failed to fetch candidates", details: error.message });
+  }
+};
+
+
+
+
 /**
  * ✅ Get Candidate Profile with Job History
  */
@@ -700,6 +736,9 @@ exports.updateApplicationStatus = async (req, res) => {
       { adminStatus: status, rejectionReason: reason || null },
       { new: true }
     );
+
+    //bnbnbn
+    //if status is confirmed , just deduct one vacancy from shiftId ....
 
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
