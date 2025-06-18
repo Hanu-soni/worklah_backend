@@ -15,7 +15,7 @@ const authMiddleware = async (req, res, next) => {
   try {
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded,"...................................18");
+   // console.log(decoded,"...................................18");
     // ✅ If admin login (role only)
     if (decoded.role === "ADMIN" && !decoded._id && !decoded.id) {
       const adminDoc = await Admin.findOne({ email: "admin@example.com" });
@@ -26,7 +26,7 @@ const authMiddleware = async (req, res, next) => {
         profilePicture: adminDoc?.profilePicture || "/assets/profile.svg"
       };
 
-      console.log(req.user,"........................29")
+      //console.log(req.user,"........................29")
       return next();
     }
 

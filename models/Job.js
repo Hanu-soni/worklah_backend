@@ -6,6 +6,7 @@ const jobSchema = new mongoose.Schema({
   company: { type: mongoose.Schema.Types.ObjectId, ref: "Employer", required: true },
   outlet: { type: mongoose.Schema.Types.ObjectId, ref: "Outlet", required: true },
   date : { type: Date, required: true },
+  endDate:{type: Date, required: true},
   location: { type: String, required: true },
   shortAddress: { type: String },
   industry : { type: String, enum: ["Retail", "Restaurant", "Hotel", "Healthcare"], default: "Restaurant" },

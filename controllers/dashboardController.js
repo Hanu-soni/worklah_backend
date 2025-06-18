@@ -8,6 +8,7 @@ const User = require("../models/User");
 exports.getOverviewMetrics = async (req, res) => {
   try {
     // ✅ Count active jobs
+    console.log("reached here");
     const totalJobs = await Job.countDocuments({date:{$gte:new Date()}});
 
     // ✅ Count activated Hustle Heroes (Users)
@@ -15,14 +16,51 @@ exports.getOverviewMetrics = async (req, res) => {
 
     // ✅ Get total vacancies & vacancies filled
     const vacancies = await Shift.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalVacancy: { $sum: "$vacancy" },
-          totalVacancyFilled: { $sum: "$vacancyFilled" },
-        },
-      },
-    ]);
+  {
+    $lookup: {
+      from: 'jobs', // 👈 collection name (not model name)
+      localField: 'job',
+      foreignField: '_id',
+      as: 'jobDetails'
+    }
+  },
+  {
+    $unwind: '$jobDetails' // 👈 flatten the job array
+  },
+  {
+    $match: {
+     // 'jobDetails.endDate': { $gt: new Date() } ,// 👈 filter jobs that ended before today
+      'jobDetails.date': { $gte: new Date() },
+      'jobDetails.isCancelled':false,
+
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      totalVacancy: { $sum: "$vacancy" },
+      totalVacancyFilled: { $sum: "$vacancyFilled" },
+    }
+  }
+]);
+
+
+
+  const step2 = await Shift.aggregate([
+  {
+    $lookup: {
+      from: 'jobs',
+      localField: 'job',
+      foreignField: '_id',
+      as: 'jobDetails'
+    }
+  }
+]);
+console.log("Step 2 - After $lookup:", step2); // Print first 5
+
+    console.log("reached here");
+    console.log(vacancies,".....43");
+
 
     // ✅ Count pending verifications (Users)
     const pendingVerifications = await User.countDocuments({ status: "Pending" });

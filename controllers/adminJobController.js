@@ -76,10 +76,10 @@ exports.getAllJobs = async (req, res) => {
       filters.date = { $gt: new Date() };
   filters.isCancelled = false;
     } else if (status === "Active") {
-      filters.date = { $lte: new Date() };
+      filters.date = { $gte: new Date() };
       filters.isCancelled = { $ne: true };
     } else if (status==="Completed") {
-      filters.jobStatus = status;
+      filters.date = { $lt: new Date() };
     } else if(status==='Today') {
       // ✅ Include all jobs including cancelled by default
       // Do NOT add filters.isCancelled — let it be free
@@ -136,7 +136,7 @@ if (sortBy === "date") {
 
     const totalUpcomingJobs = await Job.countDocuments({ date: { $gt: new Date() } });
     const totalCancelledJobs = await Job.countDocuments({isCancelled:true});
-    const totalCompletedJobs = 0
+    const totalCompletedJobs = await Job.countDocuments({ date: { $lt: new Date() } });
 
 
     const applicationCounts = await Application.aggregate([
@@ -191,8 +191,8 @@ if (sortBy === "date") {
 
       let jobStatus = "Unknown";
       if (job.isCancelled) jobStatus = "Cancelled";
-      else if (jobDate.isAfter(today)) jobStatus = "Upcoming";
-      else if (applicationStats.totalApplications >= totalVacancy) jobStatus = "Completed";
+      else if (job.date>new Date()) jobStatus = "Upcoming";
+     // else if (applicationStats.totalApplications >= totalVacancy) jobStatus = "Completed";
       else jobStatus = "Active";
 
       return {
