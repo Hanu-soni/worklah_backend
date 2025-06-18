@@ -11,7 +11,7 @@ exports.getOverviewMetrics = async (req, res) => {
     const totalJobs = await Job.countDocuments({date:{$gte:new Date()}});
 
     // ✅ Count activated Hustle Heroes (Users)
-    const activatedHeroes = await User.countDocuments({ role: "USER" });
+    const activatedHeroes = await User.countDocuments({ role: "USER",activatedHustle:true });
 
     // ✅ Get total vacancies & vacancies filled
     const vacancies = await Shift.aggregate([

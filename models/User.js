@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema(
     plocExpiry:{type:String},
     studentId:{type:String},
     nricNo:{type:String},
-
+    activatedHustle:{type:Boolean,default:false}
   });
 
 module.exports = mongoose.model('User', userSchema);

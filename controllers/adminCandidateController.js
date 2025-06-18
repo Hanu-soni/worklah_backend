@@ -53,7 +53,7 @@ exports.getCandidates = async (req, res) => {
       applications = await Application.find({ jobId: { $in: jobIds } })
         .populate({
           path: "userId",
-          select: "fullName phoneNumber profilePicture createdAt status profileId", // ✅ Include profileId
+          select: "fullName phoneNumber profilePicture createdAt status profileId activatedHustle", // ✅ Include profileId
           populate: {
             path: "profileId",
             select: "dob gender nricNumber", // ✅ Get Profile Data
@@ -66,7 +66,7 @@ exports.getCandidates = async (req, res) => {
 
     // ✅ Fetch all users, including profile data
     const allUsers = await User.find({})
-      .select("fullName phoneNumber profilePicture createdAt status profileId")
+      .select("fullName phoneNumber profilePicture createdAt status profileId activatedHustle ")
       .populate("profileId", "dob gender nricNumber") // ✅ Populate Profile Data
       .lean();
 
