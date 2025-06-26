@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
 
 const createToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET);
+  return jwt.sign(payload, process.env.JWT_SECRET,{
+    expiresIn: '24h' // Token expires in 1 hour
+  });
 };
 
 const setCookie = (res, token) => {

@@ -46,6 +46,9 @@ exports.getCandidates = async (req, res) => {
       .populate("shifts", "startTime startMeridian endTime endMeridian vacancy standbyVacancy")
       .lean();
 
+
+      console.log(jobs[0],"...........86")
+
     // ✅ Fetch applications for these jobs
     let applications = [];
     if (jobs.length > 0) {
@@ -83,7 +86,7 @@ exports.getCandidates = async (req, res) => {
     });
 
     const candidateMap = new Map();
-
+    console.log(applications[0],"...........86")
 // ✅ Process Applications
 applications.forEach((app) => {
   if (!app.userId || !app.jobId || !app.shiftId) return;
@@ -116,6 +119,7 @@ applications.forEach((app) => {
     const today = moment().startOf("day");
     const jobMomentDate = moment(app.jobId.date).startOf("day");
     let jobStatus = app.jobId.isCancelled ? "Cancelled" : jobMomentDate.isAfter(today) ? "Upcoming" : "Active";
+    //let activatedHustle=app.userId.activatedHustle
 
     const candidateData = {
       id: app.userId._id,
@@ -128,6 +132,8 @@ applications.forEach((app) => {
       profilePicture: app.userId.profilePicture || "/static/default-avatar.png",
       registrationDate: moment(app.userId.createdAt).format("DD MMM, YYYY"),
       appliedStatus: app.appliedStatus || "Applied",
+      status:app.userId.status,
+      activatedHustle:app.userId.activatedHustle,
       confirmedOrStandby: app.isStandby ? "Standby" : "Confirmed",
       job: {
         jobId: app.jobId._id,

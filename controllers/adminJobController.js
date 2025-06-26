@@ -129,6 +129,9 @@ if (sortBy === "date") {
       .lean();
 
 
+      console.log(jobs[0],"......................132");
+
+
 
       
      const totalActiveJobs = await Job.countDocuments({ date: { $lt: new Date() },isCancelled:false });
@@ -136,7 +139,13 @@ if (sortBy === "date") {
 
     const totalUpcomingJobs = await Job.countDocuments({ date: { $gt: new Date() } });
     const totalCancelledJobs = await Job.countDocuments({isCancelled:true});
-    const totalCompletedJobs = await Job.countDocuments({ date: { $lt: new Date() } });
+    const totalCompletedJobs = await Application.countDocuments({
+  clockInTime: { $exists: true, $ne: null },
+  clockOutTime: { $exists: true, $ne: null }
+});
+
+   
+  
 
 
     const applicationCounts = await Application.aggregate([
@@ -186,13 +195,19 @@ if (sortBy === "date") {
         standbyApplications: 0,
       };
 
-      const today = moment().startOf("day");
-      const jobDate = moment(job.date).startOf("day");
-
+      //const today = moment().startOf("day");
+      //const jobDate = moment(job.date).startOf("day");
+      let application= Application.findOne({
+        jobId:job._id,
+        shiftId:job.shifts,
+         clockInTime: { $exists: true, $ne: null },
+        clockOutTime: { $exists: true, $ne: null }
+      })
       let jobStatus = "Unknown";
       if (job.isCancelled) jobStatus = "Cancelled";
       else if (job.date>new Date()) jobStatus = "Upcoming";
      // else if (applicationStats.totalApplications >= totalVacancy) jobStatus = "Completed";
+     else if (application)jobStatus="Completed"
       else jobStatus = "Active";
 
       return {
