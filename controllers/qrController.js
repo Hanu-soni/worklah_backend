@@ -64,9 +64,16 @@ exports.generateQRCode = async (req, res) => {
 
     // Fetch jobs under the employer
     let jobs = await Job.find({company: employerId}).populate("outlet");
-    jobs = jobs.filter((job) => 
-      job.date.toISOString().split('T')[0] === new Date().toISOString().split('T')[0]
+    console.log(jobs,".......................jobs----67")
+    jobs = jobs.filter((job) =>{
+      console.log(job.date.toISOString().split('T')[0],"..........job.date.toISOString().split('T')[0]");
+      console.log( new Date().toISOString().split('T')[0],"..........job.date.toISOString().split('T')[0]");
+      return job.date.toISOString().split('T')[0] === new Date().toISOString().split('T')[0]
+    } 
+      
   );
+
+
   
 
     if (jobs.length === 0) return res.status(404).json({ message: "No jobs found for this employer" });
@@ -135,6 +142,117 @@ exports.generateQRCode = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+
+
+// ✅ Generate QR Code for an Employer
+exports.generateQRCodeForToday = async (req, res) => {
+  try {
+
+    // Validate employer
+    
+    //const employer = await Employer.findById(employerId);
+    //if (!employer) return res.status(404).json({ message: "Employer not found" });
+
+    // Fetch jobs under the employer
+     const today = new Date();
+      today.setUTCHours(0, 0, 0, 0); // set time to 00:00:00.000 in UTC
+      const formatted = today.toISOString().replace('Z', '+00:00');
+    let jobs = await Job.find({date:formatted}).populate("outlet").populate("company");
+    console.log(jobs,".......................jobs----67")
+  //   jobs = jobs.filter((job) =>{
+  //     //console.log(job.date.toISOString().split('T')[0],"..........job.date.toISOString().split('T')[0]");
+  //     //console.log( new Date().toISOString().split('T')[0],"..........job.date.toISOString().split('T')[0]");
+  //     //return job.date.toISOString().split('T')[0] === new Date().toISOString().split('T')[0]
+  //   } 
+      
+  // );
+
+
+  
+
+    if (jobs.length === 0) return res.status(404).json({ message: "No jobs found for this employer" });
+
+    // Extract outlet info
+    const outlet = jobs.map(item=>item.outlet);
+
+    // Prepare job roles and shifts
+    let jobRoles = [];
+    let jobIds = [];
+    let shiftIds = [];
+    let date =  new Date().toISOString().split('T')[0]
+    let validFrom = date;
+    let validUntil = new Date();
+    validUntil.setDate(validUntil.getDate() + 1); // Add 1 day (24 hours)
+    validUntil = validUntil.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+    
+
+    jobs.forEach(job => {
+      jobRoles.push(job.jobName);
+      jobIds.push(job._id.toString());
+    
+    });
+
+   
+
+    console.log(jobs,"..........................198------jobs");
+
+    // Prepare QR Code data
+    const qrData =jobs.map((item)=>( {
+      employerId:item.company._id,
+      employerName: item.company.mainContactPersonName,
+      date: new Date(item.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+      outlet: {
+        name: item.outlet.outletName,
+        location: item.outlet. outletAddress,
+      },
+      //jobRoles:,
+      jobId:item._id,
+      totalShifts:item.shifts.length,
+      shiftIds:item.shifts,
+      validFrom:item.date,
+      validUntil:item.date,
+      timestamp: new Date().toISOString(),
+    }))
+
+   // console.log(qrData,"............qrData");
+
+    // Generate QR Code
+     const qrCodeURL =[];
+     for(let i=0;i<qrData.length;i++){
+       qrCodeURL.push({
+        qrImage:await QRCode.toDataURL(JSON.stringify(qrData[i])),
+        data:qrData[i]
+       });
+     }
+
+    // // Store QR Code in Database
+    // const newQRCode = new QRCodeModel({
+    //   employerId,
+    //   qrCode: qrCodeURL,
+    //   validFrom,
+    //   validUntil,
+    // });
+
+    // await newQRCode.save();
+
+    res.status(201).json({
+      message: "QR Code generated successfully",
+      qrCode: qrCodeURL,
+    });
+
+  } catch (error) {
+    console.error("QR Generation Error:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+
+
+
+
+
+
 
 // exports.generateQRCode = async (req, res) => {
 //   try {
@@ -221,12 +339,14 @@ exports.generateQRCode = async (req, res) => {
 // ✅ Worker Scans QR to Get Job & Shift Details (No Clock-In Yet)
 exports.scanQRCode = async (req, res) => {
   try {
-    const { qrData } = req.body; // Scanned QR code data
-    const parsedData = JSON.parse(qrData);
-    const { jobId, shiftId } = parsedData;
+    //const { qrData } = req.body; // Scanned QR code data
+   // console.log(req.body,".....qrData");
+    //const parsedData = JSON.parse(qrData);
+    //console.log( parsedData,"..... parsedData");
+    const { jobIds, shiftId } = req.body;
 
-    const job = await Job.findById(jobId)
-      .populate("employer", "companyName")
+    const job = await Job.findById(jobIds[0])
+      .populate("company", "companyName")
       .populate("outlet", "outletName location outletImage");
 
     if (!job) return res.status(404).json({ success: false, message: "Job not found" });

@@ -124,11 +124,11 @@ exports.generateOtp = async (req, res) => {
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
-    if (otpStatus !== 'pending') {
+    if (otpStatus !== 'pending'||otpStatus !== 'queued') {
       return res.status(500).json({ message: 'Failed to send OTP. Try again later.' });
     }
 
-    res.status(200).json({ 
+   return res.status(200).json({ 
       message: 'OTP sent successfully.',
       isRegistered, 
     });
@@ -155,11 +155,11 @@ exports.resendOtp = async (req, res) => {
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
-    if (otpStatus !== 'pending') {
+    if (otpStatus !== 'pending' ||otpStatus !=='queued') {
       return res.status(500).json({ message: 'Failed to resend OTP. Try again later.' });
     }
 
-    res.status(200).json({ message: 'OTP sent successfully.', isRegistered });
+   return res.status(200).json({ message: 'OTP sent successfully.', isRegistered });
   } catch (error) {
     console.error('Error resending OTP:', error);
     res.status(500).json({ message: 'Server error', error });
@@ -173,7 +173,7 @@ exports.registerUser = async (req, res) => {
 
   try {
     // Validate required fields
-    if (!fullName || !phoneNumber || !email || !employmentStatus || !otp) {
+    if (!fullName || !phoneNumber || !email || !employmentStatus ||!otp) {
       return res.status(400).json({
         message: 'All fields are required.',
       });
