@@ -27,13 +27,15 @@ exports.verifyOTP = async (phoneNumber, code) => {
     // const verificationCheck = await client.verify.v2
     //   .services(process.env.VERIFY_SERVICE_SID)
     //   .verificationChecks.create({ to: `+${phoneNumber}`, code });
+    console.log(phoneNumber,"phoneNumber")
     let exception=['6590719694'];
     if(exception.includes(phoneNumber)){
-      return verificationCheck.status === 'approved';
+      return true;
+      // return verificationCheck.status === 'approved'
     }
     console.log(randomFourDigit)
     if(code===randomFourDigit){
-      return verificationCheck.status === 'approved';
+      return true;
     }
 
     
