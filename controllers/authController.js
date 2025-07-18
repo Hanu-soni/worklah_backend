@@ -88,7 +88,7 @@ exports.login = async (req, res) => {
     // Generate JWT token
     const token = generateToken({ id: user._id });
 
-    res.status(200).json({
+   return res.status(200).json({
       message: 'Login successful',
       token,
       user: {
@@ -121,6 +121,8 @@ exports.generateOtp = async (req, res) => {
 
     // Flag to indicate whether the user is registered
     const isRegistered = !!user;
+
+
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);

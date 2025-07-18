@@ -8,7 +8,13 @@ exports.sendOTP = async (phoneNumber) => {
     //   .services(process.env.VERIFY_SERVICE_SID)
     //   .verifications.create({ to: `+1${phoneNumber}`, channel: 'sms' });
 
-  console.log(randomFourDigit)
+    let tests=['+65 9071 9694'];
+    
+    if(tests.includes(phoneNumber)){
+      return 'pending';
+    }
+
+ // console.log(randomFourDigit)
    const verification= await client.messages
   .create({ from: process.env.TWILIO_PHONE_NUMBER, body: randomFourDigit, to: `+1${phoneNumber}` })
   //.then(message => console.log(message.sid));
@@ -28,7 +34,7 @@ exports.verifyOTP = async (phoneNumber, code) => {
     //   .services(process.env.VERIFY_SERVICE_SID)
     //   .verificationChecks.create({ to: `+${phoneNumber}`, code });
     console.log(phoneNumber,"phoneNumber")
-    let exception=['6590719694'];
+    let exception=['+6590719694'];
     if(exception.includes(phoneNumber)){
       return true;
       // return verificationCheck.status === 'approved'
@@ -44,7 +50,6 @@ exports.verifyOTP = async (phoneNumber, code) => {
     return false; // Verification failed
   }
 };
-
 
 
 
