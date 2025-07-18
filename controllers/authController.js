@@ -117,6 +117,8 @@ exports.generateOtp = async (req, res) => {
     if (!phoneNumber) {
       return res.status(400).json({ message: 'Phone number is required.' });
     }
+
+    console.log(phoneNumber,"...............121")
     const user = await User.findOne({ phoneNumber });
 
     // Flag to indicate whether the user is registered
@@ -126,7 +128,7 @@ exports.generateOtp = async (req, res) => {
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
-    console.log(otpStatus,"....otpStatus")
+    console.log(otpStatus !== 'pending',"....otpStatus")
     if (otpStatus !== 'pending'||otpStatus !== 'queued') {
       return res.status(500).json({ message: 'Failed to send OTP. Try again later.check///' });
     }
