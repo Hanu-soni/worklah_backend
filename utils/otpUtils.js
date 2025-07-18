@@ -8,7 +8,7 @@ exports.sendOTP = async (phoneNumber) => {
     //   .services(process.env.VERIFY_SERVICE_SID)
     //   .verifications.create({ to: `+1${phoneNumber}`, channel: 'sms' });
 
-    let tests=['+65 9071 9694'];
+    let tests=['+6590719694'];
     
     if(tests.includes(phoneNumber)){
       return 'pending';
