@@ -126,8 +126,9 @@ exports.generateOtp = async (req, res) => {
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
+    console.log(otpStatus,"....otpStatus")
     if (otpStatus !== 'pending'||otpStatus !== 'queued') {
-      return res.status(500).json({ message: 'Failed to send OTP. Try again later.' });
+      return res.status(500).json({ message: 'Failed to send OTP. Try again later.check///' });
     }
 
    return res.status(200).json({ 
