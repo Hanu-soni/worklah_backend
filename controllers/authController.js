@@ -68,6 +68,7 @@ exports.getUserDynamicDetails = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { phoneNumber,otp } = req.body;
+  console.log("71", phoneNumber)
 
   try {
     if (!phoneNumber ) {
@@ -113,6 +114,8 @@ exports.login = async (req, res) => {
 exports.generateOtp = async (req, res) => {
   const { phoneNumber, fullName, email, employmentStatus } = req.body;
 
+  console.log(phoneNumber)
+
   try {
     if (!phoneNumber) {
       return res.status(400).json({ message: 'Phone number is required.' });
@@ -124,12 +127,12 @@ exports.generateOtp = async (req, res) => {
     // Flag to indicate whether the user is registered
     const isRegistered = !!user;
 
-
+    console.log("line 131",isRegistered)
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
     console.log(otpStatus !== 'pending',"....otpStatusses")
-    
+
     if (otpStatus !== 'pending'||otpStatus !== 'queued') {
       return res.status(500).json({ message: 'Failed to send OTP. Try again later.check///' });
     }
