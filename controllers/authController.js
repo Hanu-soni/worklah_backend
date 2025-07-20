@@ -165,7 +165,7 @@ exports.resendOtp = async (req, res) => {
 
     // Send OTP using Twilio
     const otpStatus = await sendOTP(phoneNumber);
-    if (otpStatus !== 'pending' ||otpStatus !=='queued') {
+    if (otpStatus !== 'pending') {
       console.log("168", otpStatus)
       return res.status(500).json({ message: 'Failed to resend OTP. Try again later.' });
     }
